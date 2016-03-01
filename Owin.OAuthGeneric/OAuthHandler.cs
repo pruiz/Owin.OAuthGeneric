@@ -81,6 +81,8 @@ namespace Owin.OAuthGeneric
 		
 		protected override async Task<AuthenticationTicket> AuthenticateCoreAsync()
 		{
+			Logger.WriteVerbose("Executing AuthenticateCoreAsync..");
+
 			AuthenticationProperties properties = null;
 			var query = Request.Query;
 
@@ -233,6 +235,8 @@ namespace Owin.OAuthGeneric
 				return Task.FromResult<object>(null);
 			}
 
+			Logger.WriteVerbose("Handling authentication challenge..");
+
 			AuthenticationResponseChallenge challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
 
 			if (challenge == null)
@@ -270,7 +274,11 @@ namespace Owin.OAuthGeneric
 		{
 			if (Options.CallbackPath.HasValue && Options.CallbackPath == Request.Path)
 			{
+				Logger.WriteVerbose("Handling authentication reply..");
+
 				AuthenticationTicket ticket = await AuthenticateAsync();
+
+				Logger.WriteVerbose("Processing authentication ticket..");
 
 				if (ticket == null || ticket.Identity == null || !ticket.Identity.IsAuthenticated)
 				{
@@ -289,9 +297,10 @@ namespace Owin.OAuthGeneric
 						return false;
 					}
 
+					Response.StatusCode = 500;
+					Response.ReasonPhrase = ex.Message;
+
 					throw new AggregateException("Unhandled remote failure.", errorContext.Failure);
-					//Response.StatusCode = 500;
-					//return true;
 				}
 
 				// We have a ticket if we get here

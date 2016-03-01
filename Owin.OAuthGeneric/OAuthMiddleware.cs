@@ -121,7 +121,7 @@ namespace Owin.OAuthGeneric
 		/// <returns>An <see cref="AuthenticationHandler"/> configured with the <see cref="OAuthOptions"/> supplied to the constructor.</returns>
 		protected override AuthenticationHandler<TOptions> CreateHandler()
 		{
-			return new OAuthHandler<TOptions>(Backchannel, App.CreateLogger("OAuthHandler:" + Options.AuthenticationType));
+			return new OAuthHandler<TOptions>(Backchannel, App.CreateLogger("Owin.OAuthGeneric.OAuthHandler:" + Options.AuthenticationType));
 		}
 	}
 }
